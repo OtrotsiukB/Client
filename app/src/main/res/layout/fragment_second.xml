@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SecondFragment">
+
+    <TextView
+        android:id="@+id/textview_second"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/button_second"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_second"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/previous"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/b_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="start"
+        app:layout_constraintBottom_toTopOf="@+id/button_second"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/b_scrolingBefore"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="|"
+        app:layout_constraintBottom_toTopOf="@+id/b_play"
+        app:layout_constraintEnd_toStartOf="@+id/b_scrolingbefore10sec"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/b_scrolingbefore10sec"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="10sec"
+        app:layout_constraintEnd_toStartOf="@+id/b_playAndPause"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/b_scrolingBefore"
+        app:layout_constraintTop_toTopOf="@+id/b_scrolingBefore" />
+
+    <Button
+        android:id="@+id/b_playAndPause"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="play  ||"
+        app:layout_constraintEnd_toStartOf="@+id/b_scrolingnext10sec"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/b_scrolingbefore10sec"
+        app:layout_constraintTop_toTopOf="@+id/b_scrolingbefore10sec" />
+
+    <Button
+        android:id="@+id/b_scrolingnext10sec"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="10sec"
+        app:layout_constraintEnd_toStartOf="@+id/b_scrolingNext"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/b_playAndPause"
+        app:layout_constraintTop_toTopOf="@+id/b_playAndPause" />
+
+    <Button
+        android:id="@+id/b_scrolingNext"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="|"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/b_scrolingnext10sec"
+        app:layout_constraintTop_toTopOf="@+id/b_scrolingnext10sec" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/b_playAndPause"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/b_startservise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="startservise"
+        app:layout_constraintBottom_toTopOf="@+id/seekBar"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/b_stopservis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="stopservis"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/b_startservise" />
+
+    <Button
+        android:id="@+id/b_playFromServis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="playFromServis"
+        app:layout_constraintBottom_toTopOf="@+id/b_startservise"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
