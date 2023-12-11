@@ -1,12 +1,19 @@
 package com.example.client
 
+import android.Manifest
+import android.content.ComponentName
+import android.content.Context
+import android.content.Context.BIND_AUTO_CREATE
 import android.content.Intent
+import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.media.browse.MediaBrowser
 import android.media.session.MediaController
 import android.net.Uri
 import android.os.Bundle
+import android.os.IBinder
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 //import android.support.v4.media.session.MediaSessionCompat
@@ -23,10 +30,13 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.SeekBar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavDeepLinkRequest.Builder.Companion.fromUri
 import androidx.navigation.fragment.findNavController
 import com.example.client.databinding.FragmentSecondBinding
 import com.example.client.network.retrofit
+import com.example.client.servise.AudioPlayerService
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.MediaItem.fromUri
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -50,6 +60,23 @@ class SecondFragment : Fragment() {
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var mediaController: MediaControllerCompat
+
+    private lateinit var audioPlayerService: AudioPlayerService
+    private var isServiceBound = false
+
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as AudioPlayerService.LocalBinder
+            audioPlayerService = binder.getService()
+            isServiceBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isServiceBound = false
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -164,9 +191,55 @@ class SecondFragment : Fragment() {
         })
 
         /////////
+        binding.bStartservise.setOnClickListener {
+            // Запускаем сервис
+         //   val serviceIntent = Intent(requireContext(), AudioPlayerService::class.java)
+          //  getActivity()?.bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+
+            val intent = Intent(requireContext(),AudioPlayerService::class.java)
+            getActivity()?.bindService(intent,serviceConnection,BIND_AUTO_CREATE)
+            binding.tvInfo.text="servis start"
+
+        }
+        binding.bPlayFromServis.setOnClickListener {
+           // startAudioPlayback("https://ia800500.us.archive.org/24/items/21_20231206/01.mp3")
+            binding.tvInfo.text = audioPlayerService.test()
+           // audioPlayerService.startAudioPlayback("https://ia800500.us.archive.org/24/items/21_20231206/01.mp3")
+           // startAudioPlayback("https://ia800500.us.archive.org/24/items/21_20231206/01.mp3")
+            checkPermision("https://ia800500.us.archive.org/24/items/21_20231206/01.mp3")
+        }
+
+    }
+    fun checkPermision(audioFileUri: String){
+
+        val permission = Manifest.permission.FOREGROUND_SERVICE
+        val requestCode = 123 // Любое уникальное целочисленное значение
+
+        if (ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED) {
+            // Разрешение уже предоставлено, выполняйте свой код
+        startAudioPlayback(audioFileUri)
+        } else {
+            // Запросите разрешение у пользователя
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(permission), requestCode)
+        }
 
 
     }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+
+        when (requestCode) {
+            123 -> {
+                // Проверка, предоставлено ли разрешение
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Разрешение предоставлено, теперь вы можете запустить службу в фоновом режиме
+                } else {
+                    // Разрешение отклонено, возможно, стоит предоставить дополнительную информацию пользователю
+                }
+            }
+            // Другие обработчики requestCode, если они есть
+        }
+    }
+
     fun updateSeekbar(){
         mediaPlayer.setOnPreparedListener {
             binding.seekBar.progress = mediaPlayer.currentPosition
@@ -218,5 +291,27 @@ class SecondFragment : Fragment() {
         mediaSession.release()
         _binding = null
 
+        if (isServiceBound) {
+            getActivity()?.unbindService(serviceConnection)
+            isServiceBound = false
+        }
+
+    }
+
+    // Метод для запуска воспроизведения
+    private fun startAudioPlayback(audioFileUri: String) {
+        val intent = Intent(requireContext(), AudioPlayerService::class.java).apply {
+            action = AudioPlayerService.ACTION_PLAY
+            putExtra(AudioPlayerService.EXTRA_AUDIO_FILE_URI, audioFileUri)
+        }
+        getActivity()?.startService(intent)
+    }
+
+    // Метод для остановки воспроизведения
+    private fun stopAudioPlayback() {
+        if (isServiceBound) {
+            val intent = Intent(requireContext(), AudioPlayerService::class.java)
+            getActivity()?.stopService(intent)
+        }
     }
 }

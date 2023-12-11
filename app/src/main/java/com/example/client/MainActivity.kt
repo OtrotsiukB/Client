@@ -1,5 +1,9 @@
 package com.example.client
 
+import android.Manifest
+import android.content.Context.*
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +13,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.client.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -32,8 +38,11 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
+        checkPermisions()
     }
+   fun checkPermisions(){
 
+   }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
