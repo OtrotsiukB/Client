@@ -112,6 +112,7 @@ class SecondFragment : Fragment() {
             try {
                 mainUrl = mainUrlTemp
                 listFiles = x
+                binding.tvInfo.text="ok"
             }catch (e:Exception){
                 println("problem")
             }
@@ -195,11 +196,19 @@ class SecondFragment : Fragment() {
             // Запускаем сервис
          //   val serviceIntent = Intent(requireContext(), AudioPlayerService::class.java)
           //  getActivity()?.bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+            try {
+                val intent = Intent(requireContext(), AudioPlayerService::class.java)
+                getActivity()?.bindService(intent, serviceConnection, BIND_AUTO_CREATE)
+                binding.tvInfo.text = "servis start"
+            }catch (e:Exception){
+                val x =e
+                val y = x
+                val d = y
+            }
 
-            val intent = Intent(requireContext(),AudioPlayerService::class.java)
-            getActivity()?.bindService(intent,serviceConnection,BIND_AUTO_CREATE)
-            binding.tvInfo.text="servis start"
-
+        }
+        binding.bStopservis.setOnClickListener {
+            stopAudioPlayback()
         }
         binding.bPlayFromServis.setOnClickListener {
            // startAudioPlayback("https://ia800500.us.archive.org/24/items/21_20231206/01.mp3")
