@@ -42,6 +42,9 @@ class FirstFragment : Fragment() {
                 x.main()
             }*/
         }
+        binding.bGotobooks.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_allBooksInGroup)
+        }
     }
 
     override fun onDestroyView() {
