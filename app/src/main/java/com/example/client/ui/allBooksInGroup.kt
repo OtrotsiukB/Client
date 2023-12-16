@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.client.BooksRvAdapter
 import com.example.client.R
@@ -78,6 +79,14 @@ class allBooksInGroup : Fragment(),BooksRvAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(data: BookInfo) {
-        TODO("Not yet implemented")
+        // Ваш код, открывающий фрагмент
+     //   val action = YourFragmentDirections.actionYourFragment(yourData)
+
+        val action = allBooksInGroupDirections.actionAllBooksInGroupToBookDetalFragment2(data)
+        findNavController().navigate(action)
+
+      //  findNavController().navigate(R.id.action_FirstFragment_to_allBooksInGroup)
+
+
     }
 }

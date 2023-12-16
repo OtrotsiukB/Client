@@ -31,5 +31,18 @@
     <fragment
         android:id="@+id/allBooksInGroup"
         android:name="com.example.client.ui.allBooksInGroup"
-        android:label="allBooksInGroup" />
+        android:label="allBooksInGroup" >
+        <action
+            android:id="@+id/action_allBooksInGroup_to_bookDetalFragment2"
+            app:destination="@id/bookDetalFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/bookDetalFragment2"
+        android:name="com.example.client.ui.BookDetalFragment"
+        android:label="fragment_book_detal"
+        tools:layout="@layout/fragment_book_detal" >
+        <argument
+            android:name="book"
+            app:argType="com.example.client.data.BookInfo" />
+    </fragment>
 </navigation>
