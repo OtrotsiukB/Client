@@ -7,10 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
-import com.example.client.R
+import com.example.client.*
 import com.example.client.data.BookInfo
 import com.example.client.databinding.FragmentBookDetalBinding
 import com.example.client.databinding.FragmentFirstBinding
+import com.example.client.network.retrofit
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,7 +27,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [BookDetalFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class BookDetalFragment : Fragment() {
+class BookDetalFragment : Fragment(),playlistAdapter.OnItemClickListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -33,6 +38,11 @@ class BookDetalFragment : Fragment() {
     private val binding get() = _binding!!
 
     lateinit var book:BookInfo
+    lateinit var mainUrl:String
+    lateinit var listFiles: MutableList<Files>
+
+
+    private val bookAdapter = playlistAdapter(this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +76,6 @@ class BookDetalFragment : Fragment() {
 
         val number = book.numberCycle
 
-        val integerPart = number.toInt()
         val fractionalPart = number.rem(1.0)
         if (fractionalPart>0){
             binding.tvCycle.text = book.cycle + " ("+book.numberCycle+")"
@@ -74,26 +83,78 @@ class BookDetalFragment : Fragment() {
             binding.tvCycle.text = book.cycle + " ("+book.numberCycle.toInt()+")"
 
         }
-
-
         var allgenry =""
         for (item in book.genre){
             allgenry = allgenry +""+item+" "
         }
-
-
         binding.tvGenre.text = allgenry
         binding.tvInfobook.text = book.infoOfBook
+    }
+    fun initPlayList(){
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                var id = book.idInArhive
+                var x: MutableList<Files> = mutableListOf<Files>()
+                var files = getFiles()
+                for (i in files){
+                        if (i.name!!.contains(".mp3")) {
+                            x.add(i)
+                        }
+                }
+                listFiles = x
+                initRVAdapter()
+
+            }catch (e: Exception) {
+
+            }
+        }
+    }
+    suspend fun getFiles():MutableList<Files>{
+      //  withContext(Dispatchers.IO) {
+
+            try {
+                var info = retrofit.RetrofitModule.iRetrofit.getinfo(book.idInArhive)
+                mainUrl = "https://" + info.d1 + info.dir + "/"
+                val temp = info.files.toMutableList()
+                return temp
+
+            }catch (e:Exception){
+                try {
+                    var info = retrofit.RetrofitModule.iRetrofit.getinfoTest(book.idInArhive)
+                    mainUrl = "https://" + info.d1 + info.dir + "/"
+                    var temp = ConvetorFiles2ToFiles.convert(info.files)
+                    return temp
+                }catch (e:Exception)
+                {
+                    var info = retrofit.RetrofitModule.iRetrofit.getinfoTest3(book.idInArhive)
+                    mainUrl = "https://" + info.d1 + info.dir + "/"
+                    var temp = ConvetorFiles2ToFiles.convert(info.files)
+                    return temp
+                }
+
+            }
 
 
+    return mutableListOf()
     }
 
+    suspend fun initRVAdapter(){
+        withContext(Dispatchers.Main) {
+            try {
+                bookAdapter.setData(listFiles)
+                binding.rvPlaylist.adapter = bookAdapter
+            }catch (e:Exception){
+                val t = e
+                val d = t
+            }
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val args: BookDetalFragmentArgs by navArgs()
         book = args.book
         initComponent()
-        // В коде вашего фрагмента
+        initPlayList()
 
 
     }
@@ -116,5 +177,9 @@ class BookDetalFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onItemClick(data: Files) {
+        TODO("Not yet implemented")
     }
 }

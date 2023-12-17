@@ -1,9 +1,9 @@
-package com.example.client
+ package com.example.client
 
 import com.google.gson.annotations.SerializedName
 
 
-data class Files (
+data class Files2 (
 
   @SerializedName("name"    ) var name    : String? = null,
   @SerializedName("source"  ) var source  : String? = null,
@@ -14,12 +14,11 @@ data class Files (
   @SerializedName("sha1"    ) var sha1    : String? = null,
   @SerializedName("format"  ) var format  : String? = null,
   @SerializedName("length"  ) var length  : String? = null,
-  @SerializedName("title"   ) var title   : String? = "---",
+  @SerializedName("title"   ) var title   : String? = null,
   @SerializedName("creator" ) var creator : String? = null,
   @SerializedName("album"   ) var album   : String? = null,
   @SerializedName("track"   ) var track   : String? = null,
   @SerializedName("artist"  ) var artist  : String? = null,
-  @SerializedName("genre"   ) var genre   : String? = null,
-  @SerializedName("comment" ) var comment : String? = null
+  @SerializedName("genre"   ) var genre   : String? = null
 
 )

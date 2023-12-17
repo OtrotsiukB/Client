@@ -184,6 +184,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_infobook" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_playlist"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/b_playLastPlase"
+                app:spanCount="1"
+                tools:listitem="@layout/playlist_holder"
+                tools:orientation="horizontal" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

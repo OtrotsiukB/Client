@@ -98,7 +98,7 @@ class SecondFragment : Fragment() {
             var info = retrofit.RetrofitModule.iRetrofit.getinfo(testId)
             var info2 = info
              var x: MutableList<Files> = mutableListOf<Files>()
-            var mainUrlTemp=info.d1+info.dir+"/"
+            var mainUrlTemp="https://"+info.d1+info.dir+"/"
             for (i in info.files)
             {
                 try {

@@ -13,6 +13,8 @@ import com.example.client.RepositoryTest
 import com.example.client.data.BookInfo
 import com.example.client.databinding.FragmentAllBooksInGroupBinding
 
+//import com.example.client.databinding.FragmentAllBooksInGroupBinding
+
 
 class allBooksInGroup : Fragment(),BooksRvAdapter.OnItemClickListener {
     //private var _binding: FragmentFirstBinding? = null
