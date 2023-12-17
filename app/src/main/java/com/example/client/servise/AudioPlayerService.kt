@@ -10,6 +10,7 @@ import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.example.client.Files
 import com.example.client.MainActivity
 import com.example.client.R
 import java.util.Date.from
@@ -29,6 +30,10 @@ class AudioPlayerService : Service() {
         fun getService(): AudioPlayerService = this@AudioPlayerService
     }
 
+     var listFiles: MutableList<Files> = mutableListOf()
+     var targetPlay:Files= Files()
+     var mainUrl:String =""
+
     override fun onCreate() {
         super.onCreate()
 
@@ -36,15 +41,26 @@ class AudioPlayerService : Service() {
     fun test():String{
         return "servis wirking"
     }
+    fun setListFilesFromDetallFragment( files: MutableList<Files>){
+        listFiles=files
+    }
+    fun setTargetPlayFromDetallFragment(target:Files){
+        targetPlay = target
+    }
+    fun setMainUrlFromDetalFragment(url:String){
+        mainUrl=url
+    }
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null && intent.action == ACTION_PLAY) {
-            //val audioFileUri = intent.getStringExtra("https://ia800500.us.archive.org/24/items/21_20231206/01.mp3")
-            val audioFileUri = intent.getStringExtra(EXTRA_AUDIO_FILE_URI)
+            val audioFileUri = intent.getStringExtra("https://ia800500.us.archive.org/24/items/21_20231206/01.mp3")
+            //val audioFileUri = intent.getStringExtra(EXTRA_AUDIO_FILE_URI)
+           // val audioFileUri = mainUrl+targetPlay.name
 
             if(mediaPlayer==null) {
-                startAudioPlayback(audioFileUri)
+                //////////
+             //   startAudioPlayback(audioFileUri)
             }else
             {
                 mediaPlayer?.start()

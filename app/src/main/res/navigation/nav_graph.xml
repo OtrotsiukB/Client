@@ -44,5 +44,13 @@
         <argument
             android:name="book"
             app:argType="com.example.client.data.BookInfo" />
+        <action
+            android:id="@+id/action_bookDetalFragment2_to_playerFragment"
+            app:destination="@id/playerFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="com.example.client.ui.PlayerFragment"
+        android:label="fragment_player"
+        tools:layout="@layout/fragment_player" />
 </navigation>

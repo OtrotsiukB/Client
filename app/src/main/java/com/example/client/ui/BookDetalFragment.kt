@@ -1,10 +1,17 @@
 package com.example.client.ui
 
+import android.app.ActivityManager
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.client.*
@@ -12,10 +19,8 @@ import com.example.client.data.BookInfo
 import com.example.client.databinding.FragmentBookDetalBinding
 import com.example.client.databinding.FragmentFirstBinding
 import com.example.client.network.retrofit
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.client.servise.AudioPlayerService
+import kotlinx.coroutines.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,6 +41,9 @@ class BookDetalFragment : Fragment(),playlistAdapter.OnItemClickListener {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private lateinit var audioPlayerService: AudioPlayerService
+    private var isServiceBound = false
 
     lateinit var book:BookInfo
     lateinit var mainUrl:String
@@ -64,6 +72,10 @@ class BookDetalFragment : Fragment(),playlistAdapter.OnItemClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        if (isServiceBound) {
+            getActivity()?.unbindService(serviceConnection)
+            isServiceBound = false
+        }
     }
     fun initComponent(){
         binding.tvTitle.text = book.name
@@ -159,6 +171,58 @@ class BookDetalFragment : Fragment(),playlistAdapter.OnItemClickListener {
 
     }
 
+    fun startServis(){
+      //  if (!isServiceRunning(AudioPlayerService::class.java, requireContext())) {
+            // Запустить службу, так как она не запущена
+            try {
+                val intent = Intent(requireContext(), AudioPlayerService::class.java)
+                getActivity()?.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+               /////
+            }catch (e:Exception){
+                val x =e
+                val y = x
+                val d = y
+            }
+       /* }else
+        {
+
+
+        }*/
+
+
+
+    }
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as AudioPlayerService.LocalBinder
+            audioPlayerService = binder.getService()
+            isServiceBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isServiceBound = false
+        }
+    }
+
+   /* fun isServiceRunning(serviceClass: Class<*>, context: Context): Boolean {
+        val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val services = manager.getRunningServices(Int.MAX_VALUE)
+        val className = serviceClass.name
+
+        for (service in services) {
+            if (className == service.service.className) {
+                return true
+            }
+        }
+
+        return false
+    }
+*/
+    override fun onDestroy() {
+        super.onDestroy()
+
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -180,6 +244,20 @@ class BookDetalFragment : Fragment(),playlistAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(data: Files) {
-        TODO("Not yet implemented")
+        startServis()
+        CoroutineScope(Dispatchers.IO).launch {
+            var check = false
+            while (!check) {
+                if (isServiceBound == true) {
+                    audioPlayerService.setListFilesFromDetallFragment(listFiles)
+                    audioPlayerService.setMainUrlFromDetalFragment(mainUrl)
+                    audioPlayerService.setTargetPlayFromDetallFragment(data)
+                    check=true
+                    CoroutineScope(Dispatchers.Main).launch {
+                        findNavController().navigate(R.id.action_bookDetalFragment2_to_playerFragment)
+                    }
+                }
+            }
+        }
     }
 }
