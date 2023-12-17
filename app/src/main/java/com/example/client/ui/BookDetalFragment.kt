@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.example.client.R
 import com.example.client.data.BookInfo
 import com.example.client.databinding.FragmentBookDetalBinding
@@ -54,12 +55,44 @@ class BookDetalFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+    fun initComponent(){
+        binding.tvTitle.text = book.name
+        Glide.with(requireContext())
+            //.load(R.drawable.movie6)
+            .load(book.urlImage)
+            .into(binding.icAfisha)
+        binding.tvYear.text=book.year
+        binding.tvLong.text = book.duration
+
+        val number = book.numberCycle
+
+        val integerPart = number.toInt()
+        val fractionalPart = number.rem(1.0)
+        if (fractionalPart>0){
+            binding.tvCycle.text = book.cycle + " ("+book.numberCycle+")"
+        }else{
+            binding.tvCycle.text = book.cycle + " ("+book.numberCycle.toInt()+")"
+
+        }
+
+
+        var allgenry =""
+        for (item in book.genre){
+            allgenry = allgenry +""+item+" "
+        }
+
+
+        binding.tvGenre.text = allgenry
+        binding.tvInfobook.text = book.infoOfBook
+
+
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val args: BookDetalFragmentArgs by navArgs()
         book = args.book
-        binding.textView2.text = book.name
+        initComponent()
         // В коде вашего фрагмента
 
 
