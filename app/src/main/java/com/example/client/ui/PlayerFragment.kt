@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.IBinder
 import androidx.fragment.app.Fragment
@@ -11,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import com.example.client.MainActivity
 import com.example.client.R
 import com.example.client.databinding.FragmentFirstBinding
 import com.example.client.databinding.FragmentPlayerBinding
@@ -42,6 +44,9 @@ class PlayerFragment : Fragment() {
 
     private lateinit var audioPlayerService: AudioPlayerService
     private var isServiceBound = false
+    private  var mediaPlayer: MediaPlayer? = null
+
+    var check = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,10 +77,13 @@ class PlayerFragment : Fragment() {
 
         }
         CoroutineScope(Dispatchers.IO).launch {
-            var check = false
+
             while (!check) {
                 if (isServiceBound == true) {
                     check=true
+                    audioPlayerService.initPlayMedia()
+                    audioPlayerService.startAudio()
+                 //   mediaPlayer=audioPlayerService.mediaPlayer
                     CoroutineScope(Dispatchers.Main).launch {
                         binding.tvTest.text = audioPlayerService.targetPlay.name
                     }
@@ -97,7 +105,9 @@ class PlayerFragment : Fragment() {
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
+
             isServiceBound = false
+
         }
     }
 

@@ -20,7 +20,7 @@ class AudioPlayerService : Service() {
 
 
     //////////////////////
-    private  var mediaPlayer: MediaPlayer? = null
+
     val binder = LocalBinder()
 
     override fun onBind(intent: Intent): IBinder {
@@ -29,10 +29,11 @@ class AudioPlayerService : Service() {
     inner class LocalBinder : Binder() {
         fun getService(): AudioPlayerService = this@AudioPlayerService
     }
-
+     var mediaPlayer: MediaPlayer? = null
      var listFiles: MutableList<Files> = mutableListOf()
      var targetPlay:Files= Files()
      var mainUrl:String =""
+     var numberPlay:Int = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -49,6 +50,59 @@ class AudioPlayerService : Service() {
     }
     fun setMainUrlFromDetalFragment(url:String){
         mainUrl=url
+    }
+
+    fun findNubberTrack():Int{
+        for (i in 0 until listFiles.size){
+            if(targetPlay.name==listFiles[i].name){
+                return i
+            }
+        }
+        return -1
+    }
+    fun initPlayMedia(){
+        if(mediaPlayer!=null) {
+            mediaPlayer?.stop()
+            mediaPlayer=null
+        }
+        numberPlay = findNubberTrack()
+        if (numberPlay!=-1) {
+            mediaPlayer = MediaPlayer()
+
+            val audioAttributes = AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+
+            mediaPlayer?.setAudioAttributes(audioAttributes)
+            mediaPlayer?.setOnCompletionListener {
+                // Переключение на следующий трек после завершения воспроизведения
+                playNext()
+            }
+        }
+    }
+
+    fun playNext(){
+        numberPlay = numberPlay+1
+        if (numberPlay>=listFiles.size){
+            startAudio()
+        }else
+        {
+            numberPlay = numberPlay-1
+        }
+    }
+    fun startAudio(){
+
+        mediaPlayer = MediaPlayer.create(
+            this,
+            Uri.parse(mainUrl+listFiles[numberPlay].name)
+        )
+        val audioAttributes = AudioAttributes.Builder()
+            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+            .build()
+
+        mediaPlayer?.setAudioAttributes(audioAttributes)
+        mediaPlayer?.start()
+        showNotification(listFiles[numberPlay].title.toString())
     }
 
 
@@ -73,6 +127,11 @@ class AudioPlayerService : Service() {
 
             mediaPlayer?.pause()
         }
+        if (intent != null && intent.action == ACTION_STOP) {
+
+            mediaPlayer?.pause()
+            stopForegroundService()
+        }
 
         return START_NOT_STICKY
     }
@@ -92,11 +151,9 @@ class AudioPlayerService : Service() {
 
         // Создание уведомления для Foreground Service
          try{
-        showNotification("","","")}
+        showNotification("")}
          catch (e:Exception){
-             val x =e
-             val y = x
-             val d = y
+
          }
 
 
@@ -106,7 +163,7 @@ class AudioPlayerService : Service() {
     // Intent для кнопки Play
 
 
-    fun showNotification(id: String,name:String,rating:String){
+    fun showNotification(id: String){
         val playIntent = Intent(applicationContext, AudioPlayerService::class.java)
             .setAction(ACTION_PLAY)
         val playPendingIntent = PendingIntent.getService(
@@ -125,6 +182,15 @@ class AudioPlayerService : Service() {
             pauseIntent,
             PendingIntent.FLAG_MUTABLE
         )
+        // Intent для кнопки стоп
+        val stopIntent = Intent(applicationContext, AudioPlayerService::class.java)
+            .setAction(ACTION_STOP)
+        val stopPendingIntent = PendingIntent.getService(
+            applicationContext,
+            1,//0
+            stopIntent,
+            PendingIntent.FLAG_MUTABLE
+        )
 
         var intent = Intent(applicationContext, MainActivity::class.java)
             .setAction(Intent.ACTION_VIEW)
@@ -137,27 +203,15 @@ class AudioPlayerService : Service() {
 
 
         val notification = NotificationCompat.Builder(applicationContext, "AudioBooks")
-            .setContentTitle("Аудикниги")
-            .setContentText("Now Playing "+id)
+            .setContentTitle("Аудикниги" )
+            .setContentText("Проигрывается:  "+id)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(pendingIntent)
             .addAction(android.R.drawable.ic_media_play, "Play", playPendingIntent)
-            .addAction(android.R.drawable.ic_media_pause, "Pause", pausePendingIntent)
-
+            .addAction(android.R.drawable.ic_media_pause, "Пауза", pausePendingIntent)
+            .addAction(android.R.drawable.ic_delete,"Стоп",stopPendingIntent)
             .build()
 
-
-
-
-           //
-
-
-
-
-        //.setSmallIcon(R.drawable.ic_message)
-        // .setWhen(message.timestamp)
-        // .setLargeIcon(bitmapIcon)
-        // .build()
         Log.i(ContentValues.TAG, "создалось notification!")
         try {
             startForeground(NOTIFICATION_ID, notification)
@@ -167,16 +221,7 @@ class AudioPlayerService : Service() {
             val d = y
         }
 
-       /* try {
 
-
-            with(NotificationManagerCompat.from(applicationContext)) {
-                // notificationId is a unique int for each notification that you must define
-                notify(2, notification.build())
-            }
-        }  catch (e: Exception) {
-            Log.i(ContentValues.TAG, "error"+e.toString())
-        }*/
     }
 
 
@@ -184,13 +229,20 @@ class AudioPlayerService : Service() {
         super.onDestroy()
         mediaPlayer?.release()
 
-        stopForeground(true)
+        //stopForeground(true)
 
+    }
+    private fun stopForegroundService() {
+        stopForeground(true)
+        mediaPlayer?.stop()
+
+        stopSelf() // Останавливаем сам сервис
     }
 
     companion object {
         const val ACTION_PLAY = "action_play"
         const val ACTION_PAUSE = "action_pause"
+        const val ACTION_STOP = "action_stop"
         const val EXTRA_AUDIO_FILE_URI = "extra_audio_file_uri"
         const val CHANNEL_ID = "audio_player_channel"
         const val NOTIFICATION_ID = 1
