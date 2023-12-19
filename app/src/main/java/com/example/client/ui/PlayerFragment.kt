@@ -11,7 +11,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.client.MainActivity
 import com.example.client.R
 import com.example.client.databinding.FragmentFirstBinding
@@ -44,7 +47,7 @@ class PlayerFragment : Fragment() {
 
     private lateinit var audioPlayerService: AudioPlayerService
     private var isServiceBound = false
-    private  var mediaPlayer: MediaPlayer? = null
+   // private  var mediaPlayer: MediaPlayer? = null
 
     var check = false
 
@@ -72,7 +75,7 @@ class PlayerFragment : Fragment() {
         val intent = Intent(requireContext(), AudioPlayerService::class.java)
         getActivity()?.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         try {
-            binding.tvTest.text = audioPlayerService.targetPlay.name
+           // binding.tvTest.text = audioPlayerService.targetPlay.name
         }catch (e:Exception){
 
         }
@@ -85,12 +88,102 @@ class PlayerFragment : Fragment() {
                     audioPlayerService.startAudio()
                  //   mediaPlayer=audioPlayerService.mediaPlayer
                     CoroutineScope(Dispatchers.Main).launch {
-                        binding.tvTest.text = audioPlayerService.targetPlay.name
+                       try {
+                           initListener()
+                           initTVandIC()
+                       }catch (e:Exception){}
                     }
                 }
             }
         }
 
+    }
+    fun initTVandIC(){
+        binding.tvAutorPlayer.text = audioPlayerService.book?.autor
+
+        binding.tvNamebookplay.text = audioPlayerService.book?.name
+        if(audioPlayerService.listFiles[audioPlayerService.numberPlay.toInt()].title == "---"){
+            binding.tvTitleplayer.text =
+                audioPlayerService.listFiles[audioPlayerService.numberPlay.toInt()].title +" ("+
+                    audioPlayerService.listFiles[audioPlayerService.numberPlay.toInt()].name+")"
+        }else {
+            binding.tvTitleplayer.text =
+                audioPlayerService.listFiles[audioPlayerService.numberPlay.toInt()].title
+        }
+        Glide.with(requireContext())
+            //.load(R.drawable.movie6)
+            .load(audioPlayerService.book?.urlImage)
+
+            .into(binding.icAfishaplayer)
+
+        updateSeekbar()
+    }
+    fun updateSeekbar(){
+        //audioPlayerService.mediaPlayer?.setOnPreparedListener {
+            binding.seekBarPlayer.progress = audioPlayerService.mediaPlayer?.currentPosition!!
+            binding.seekBarPlayer.max = audioPlayerService.mediaPlayer?.duration!!
+      //  }
+    }
+    fun initListener()
+    {
+        binding.icPalyAndPause.setOnClickListener {
+            if (!audioPlayerService.playnow){
+                binding.icPalyAndPause.setImageResource(R.drawable.ic_media_pause)
+                audioPlayerService.playAudio()
+                audioPlayerService.playnow=true
+            }else{
+                binding.icPalyAndPause.setImageResource(R.drawable.ic_media_play)
+                audioPlayerService.pauseAudio()
+                audioPlayerService.playnow=false
+            }
+        }
+        binding.seekBarPlayer.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                // Обновите позицию воспроизведения при изменении положения ползунка
+                if (fromUser) {
+                    audioPlayerService.mediaPlayer?.seekTo(progress)
+                   // mediaPlayer.seekTo(progress)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                // Пользователь начал перемещение ползунка
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                // Пользователь завершил перемещение ползунка
+                seekBar?.let {
+                    // Получаем позицию, куда переместил пользователь
+                    val newPosition = it.progress
+
+                    // Перемотка аудио к новой позиции
+                    audioPlayerService.mediaPlayer?.seekTo(newPosition)
+                }
+
+            }
+        })
+
+        binding.icNl.setOnClickListener {
+            val newPosition = audioPlayerService.mediaPlayer?.currentPosition?.plus(10000)
+            if (newPosition != null) {
+                audioPlayerService.mediaPlayer?.seekTo(newPosition)
+            }
+        }
+        binding.icPl.setOnClickListener {
+            val newPosition = audioPlayerService.mediaPlayer?.currentPosition?.minus(10000)
+            if (newPosition != null) {
+                audioPlayerService.mediaPlayer?.seekTo(newPosition)
+            }
+        }
+        binding.icNext.setOnClickListener {
+             audioPlayerService.playNext()
+            initTVandIC()
+
+        }
+        binding.icPrev.setOnClickListener {
+            audioPlayerService.playPrev()
+            initTVandIC()
+        }
     }
 
     override fun onDestroyView() {

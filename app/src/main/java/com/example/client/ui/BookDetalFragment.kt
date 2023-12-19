@@ -252,6 +252,7 @@ class BookDetalFragment : Fragment(),playlistAdapter.OnItemClickListener {
                     audioPlayerService.setListFilesFromDetallFragment(listFiles)
                     audioPlayerService.setMainUrlFromDetalFragment(mainUrl)
                     audioPlayerService.setTargetPlayFromDetallFragment(data)
+                    audioPlayerService.setDataBookPlay(book)
                     check=true
                     CoroutineScope(Dispatchers.Main).launch {
                         findNavController().navigate(R.id.action_bookDetalFragment2_to_playerFragment)

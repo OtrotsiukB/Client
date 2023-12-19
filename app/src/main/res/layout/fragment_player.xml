@@ -7,12 +7,132 @@
     tools:context=".FirstFragment">
 
     <TextView
-        android:id="@+id/tv_test"
+        android:id="@+id/tv_namebookplay"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+
+        android:layout_marginEnd="8dp"
+        android:text="Отступник"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tv_autorPlayer"
+        app:layout_constraintTop_toBottomOf="@+id/ic_afishaplayer" />
+
+    <ImageView
+        android:id="@+id/ic_paly_and_pause"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_media_pause"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ic_nl"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/ic_pl" />
+
+    <ImageView
+        android:id="@+id/ic_pl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_media_pl"
+        app:layout_constraintBottom_toBottomOf="@+id/ic_paly_and_pause"
+        app:layout_constraintEnd_toStartOf="@+id/ic_paly_and_pause"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/ic_prev"
+        app:layout_constraintTop_toTopOf="@+id/ic_paly_and_pause"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/ic_nl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_media_nl"
+        app:layout_constraintBottom_toBottomOf="@+id/ic_paly_and_pause"
+        app:layout_constraintEnd_toStartOf="@+id/ic_next"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/ic_paly_and_pause"
+        app:layout_constraintTop_toTopOf="@+id/ic_paly_and_pause" />
+
+    <ImageView
+        android:id="@+id/ic_next"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_media_next"
+        app:layout_constraintBottom_toBottomOf="@+id/ic_paly_and_pause"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/ic_nl"
+        app:layout_constraintTop_toTopOf="@+id/ic_paly_and_pause" />
+
+    <ImageView
+        android:id="@+id/ic_prev"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_media_prev"
+        app:layout_constraintBottom_toBottomOf="@+id/ic_paly_and_pause"
+        app:layout_constraintEnd_toStartOf="@+id/ic_pl"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ic_paly_and_pause" />
+
+    <SeekBar
+        android:id="@+id/seekBarPlayer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_timenow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_timenow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_first_fragment"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="32dp"
+        android:text="00:00"
+        app:layout_constraintBottom_toTopOf="@+id/ic_paly_and_pause"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tb_timeend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="1:00:00"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_timenow" />
+
+    <ImageView
+        android:id="@+id/ic_afishaplayer"
+        android:layout_width="300dp"
+        android:layout_height="350dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/ic_emtybook"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_autorPlayer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Шаман Иван"
+        app:layout_constraintStart_toStartOf="@+id/tv_titleplayer"
+        app:layout_constraintTop_toBottomOf="@+id/tv_namebookplay" />
+
+    <TextView
+        android:id="@+id/tv_titleplayer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="8dp"
+        android:text="Глава 1"
+        android:textSize="35sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_autorPlayer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

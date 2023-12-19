@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import com.example.client.Files
 import com.example.client.MainActivity
 import com.example.client.R
+import com.example.client.data.BookInfo
 import java.util.Date.from
 
 
@@ -30,10 +31,12 @@ class AudioPlayerService : Service() {
         fun getService(): AudioPlayerService = this@AudioPlayerService
     }
      var mediaPlayer: MediaPlayer? = null
+     var book: BookInfo? = null
      var listFiles: MutableList<Files> = mutableListOf()
      var targetPlay:Files= Files()
      var mainUrl:String =""
      var numberPlay:Int = 0
+     var playnow = true
 
     override fun onCreate() {
         super.onCreate()
@@ -41,6 +44,9 @@ class AudioPlayerService : Service() {
     }
     fun test():String{
         return "servis wirking"
+    }
+    fun setDataBookPlay(bookNow:BookInfo){
+        book = bookNow
     }
     fun setListFilesFromDetallFragment( files: MutableList<Files>){
         listFiles=files
@@ -83,11 +89,24 @@ class AudioPlayerService : Service() {
 
     fun playNext(){
         numberPlay = numberPlay+1
-        if (numberPlay>=listFiles.size){
+        if (numberPlay<=listFiles.size){
+            mediaPlayer?.reset()
             startAudio()
         }else
         {
             numberPlay = numberPlay-1
+        }
+    }
+    fun playPrev(){
+        numberPlay = numberPlay-1
+        if (numberPlay<0){
+            numberPlay = 0
+            mediaPlayer?.reset()
+            startAudio()
+        }else
+        {
+            mediaPlayer?.reset()
+            startAudio()
         }
     }
     fun startAudio(){
@@ -103,7 +122,15 @@ class AudioPlayerService : Service() {
         mediaPlayer?.setAudioAttributes(audioAttributes)
         mediaPlayer?.start()
         showNotification(listFiles[numberPlay].title.toString())
+        playnow=true
     }
+    fun pauseAudio(){
+        mediaPlayer?.pause()
+    }
+    fun playAudio(){
+        mediaPlayer?.start()
+    }
+
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
