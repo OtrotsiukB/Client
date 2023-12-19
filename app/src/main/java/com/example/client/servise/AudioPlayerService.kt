@@ -123,6 +123,10 @@ class AudioPlayerService : Service() {
         mediaPlayer?.start()
         showNotification(listFiles[numberPlay].title.toString())
         playnow=true
+        mediaPlayer?.setOnCompletionListener {
+            // Ваш код для обработки завершения воспроизведения
+            playNext()
+        }
     }
     fun pauseAudio(){
         mediaPlayer?.pause()
@@ -220,7 +224,9 @@ class AudioPlayerService : Service() {
         )
 
         var intent = Intent(applicationContext, MainActivity::class.java)
+            //.setAction(Intent.ACTION_VIEW)
             .setAction(Intent.ACTION_VIEW)
+
             .putExtra("bookId", id)
 
 

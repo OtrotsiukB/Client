@@ -19,10 +19,12 @@ import com.example.client.MainActivity
 import com.example.client.R
 import com.example.client.databinding.FragmentFirstBinding
 import com.example.client.databinding.FragmentPlayerBinding
+import com.example.client.iShowMiniPlayer
 import com.example.client.servise.AudioPlayerService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Thread.sleep
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -75,7 +77,8 @@ class PlayerFragment : Fragment() {
         val intent = Intent(requireContext(), AudioPlayerService::class.java)
         getActivity()?.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         try {
-           // binding.tvTest.text = audioPlayerService.targetPlay.name
+           i_showMiniPlayer?.nowPlaing(true)
+            i_showMiniPlayer?.miniPlayerOffVisible()
         }catch (e:Exception){
 
         }
@@ -91,8 +94,27 @@ class PlayerFragment : Fragment() {
                        try {
                            initListener()
                            initTVandIC()
-                       }catch (e:Exception){}
+                           CoroutineScope(Dispatchers.IO).launch {
+                           while (true){
+                               CoroutineScope(Dispatchers.Main).launch {
+                                   try {
+                                       binding.tvTimenow.text =
+                                           audioPlayerService.mediaPlayer?.currentPosition?.let {
+                                               formatDuration(
+                                                   it
+                                               )
+                                           }
+                                       updateSeekbar()
+                                   } catch (e: Exception) {
+                                   }
+                               }
+                               sleep(1000)
+                           }
+
+                           }
+                           }catch (e:Exception){}
                     }
+
                 }
             }
         }
@@ -117,6 +139,7 @@ class PlayerFragment : Fragment() {
             .into(binding.icAfishaplayer)
 
         updateSeekbar()
+        binding.tbTimeend.text = audioPlayerService.mediaPlayer?.duration?.let { formatDuration(it) }
     }
     fun updateSeekbar(){
         //audioPlayerService.mediaPlayer?.setOnPreparedListener {
@@ -185,6 +208,13 @@ class PlayerFragment : Fragment() {
             initTVandIC()
         }
     }
+    fun formatDuration(durationInMillis: Int): String {
+        val hours = durationInMillis / (1000 * 60 * 60)
+        val minutes = (durationInMillis % (1000 * 60 * 60)) / (1000 * 60)
+        val seconds = (durationInMillis % (1000 * 60)) / 1000
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -201,6 +231,16 @@ class PlayerFragment : Fragment() {
 
             isServiceBound = false
 
+        }
+    }
+
+    private var i_showMiniPlayer: iShowMiniPlayer? = null
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is iShowMiniPlayer) {
+            i_showMiniPlayer = context
+        } else {
+            throw ClassCastException("$context must implement OnSomeActionListener")
         }
     }
 

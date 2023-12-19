@@ -1,5 +1,6 @@
 package com.example.client.ui
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import com.example.client.R
 import com.example.client.RepositoryTest
 import com.example.client.data.BookInfo
 import com.example.client.databinding.FragmentAllBooksInGroupBinding
+import com.example.client.iShowMiniPlayer
 
 //import com.example.client.databinding.FragmentAllBooksInGroupBinding
 
@@ -34,7 +36,15 @@ class allBooksInGroup : Fragment(),BooksRvAdapter.OnItemClickListener {
 
         }
     }
-
+    private var i_showMiniPlayer: iShowMiniPlayer? = null
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is iShowMiniPlayer) {
+            i_showMiniPlayer = context
+        } else {
+            throw ClassCastException("$context must implement OnSomeActionListener")
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,6 +59,9 @@ class allBooksInGroup : Fragment(),BooksRvAdapter.OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         recycler = binding.rvListBooks
         initRVAdapter()
+        if (i_showMiniPlayer?.nowPlaing()==true){
+            i_showMiniPlayer?.miniPlayerOnVisible()
+        }
 
     }
     fun initRVAdapter(){

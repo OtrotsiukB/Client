@@ -167,8 +167,9 @@ class BookDetalFragment : Fragment(),playlistAdapter.OnItemClickListener {
         book = args.book
         initComponent()
         initPlayList()
-
-
+        if (i_showMiniPlayer?.nowPlaing()==true){
+            i_showMiniPlayer?.miniPlayerOnVisible()
+        }
     }
 
     fun startServis(){
@@ -192,6 +193,15 @@ class BookDetalFragment : Fragment(),playlistAdapter.OnItemClickListener {
 
 
     }
+    private var i_showMiniPlayer: iShowMiniPlayer? = null
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is iShowMiniPlayer) {
+            i_showMiniPlayer = context
+        } else {
+            throw ClassCastException("$context must implement OnSomeActionListener")
+        }
+    }
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as AudioPlayerService.LocalBinder
@@ -204,20 +214,7 @@ class BookDetalFragment : Fragment(),playlistAdapter.OnItemClickListener {
         }
     }
 
-   /* fun isServiceRunning(serviceClass: Class<*>, context: Context): Boolean {
-        val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val services = manager.getRunningServices(Int.MAX_VALUE)
-        val className = serviceClass.name
 
-        for (service in services) {
-            if (className == service.service.className) {
-                return true
-            }
-        }
-
-        return false
-    }
-*/
     override fun onDestroy() {
         super.onDestroy()
 

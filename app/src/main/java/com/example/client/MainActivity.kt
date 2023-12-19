@@ -1,11 +1,9 @@
 package com.example.client
 
-import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Context.*
-import android.content.pm.PackageManager
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
@@ -16,14 +14,19 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import android.view.View
+import androidx.media.session.MediaButtonReceiver.handleIntent
 import com.example.client.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+class MainActivity : AppCompatActivity(),iShowMiniPlayer {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private var  playing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        val navController = findNavController(R.id.nav_host_fragment_miniplayer)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
@@ -43,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         }
         checkPermisions()
         createNotificationChannel()
+
     }
    fun checkPermisions(){
 
@@ -80,12 +84,46 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+    override fun miniPlayerOffVisible(){
+        binding.fragmentContainerMiniplayer.visibility = View.GONE
+    }
+    override fun miniPlayerOnVisible(){
+        binding.fragmentContainerMiniplayer.visibility = View.VISIBLE
+    }
+
+    override fun nowPlaing(): Boolean {
+        return playing
+    }
+
+    override fun nowPlaing(status: Boolean) {
+        playing=status
+    }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        val navController = findNavController(R.id.nav_host_fragment_miniplayer)
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent != null) {
 
+            handleIntent(intent)
+        }
+    }
 
+    private fun handleIntent(intent: Intent) {
+        when (intent.action) {
+            // Invoked when a dynamic shortcut is clicked.
+            Intent.ACTION_VIEW -> {
+                var idFromIntent: String? = intent?.getStringExtra("bookId")
+                if (idFromIntent != null) {
+
+                   // miniPlayerOnVisible()
+                }
+                // Invoked when a text is shared through Direct Share.
+
+            }
+        }
+    }
 }
