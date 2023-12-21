@@ -79,6 +79,8 @@ class PlayerFragment : Fragment() {
         try {
            i_showMiniPlayer?.nowPlaing(true)
             i_showMiniPlayer?.miniPlayerOffVisible()
+            val miniPlayer = i_showMiniPlayer?.getIMiniPlayer()
+            //miniPlayer?.stop()
         }catch (e:Exception){
 
         }
@@ -89,7 +91,8 @@ class PlayerFragment : Fragment() {
                     check=true
                     audioPlayerService.initPlayMedia()
                     audioPlayerService.startAudio()
-                 //   mediaPlayer=audioPlayerService.mediaPlayer
+
+
                     CoroutineScope(Dispatchers.Main).launch {
                        try {
                            initListener()
@@ -219,6 +222,7 @@ class PlayerFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
     }
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {

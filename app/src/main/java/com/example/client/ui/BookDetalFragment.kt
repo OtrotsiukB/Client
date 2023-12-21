@@ -42,7 +42,7 @@ class BookDetalFragment : Fragment(),playlistAdapter.OnItemClickListener {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private lateinit var audioPlayerService: AudioPlayerService
+    private  var audioPlayerService: AudioPlayerService? = null
     private var isServiceBound = false
 
     lateinit var book:BookInfo
@@ -167,8 +167,11 @@ class BookDetalFragment : Fragment(),playlistAdapter.OnItemClickListener {
         book = args.book
         initComponent()
         initPlayList()
+
         if (i_showMiniPlayer?.nowPlaing()==true){
             i_showMiniPlayer?.miniPlayerOnVisible()
+            val miniPlayer = i_showMiniPlayer?.getIMiniPlayer()
+            miniPlayer?.start()
         }
     }
 
@@ -217,6 +220,8 @@ class BookDetalFragment : Fragment(),playlistAdapter.OnItemClickListener {
 
     override fun onDestroy() {
         super.onDestroy()
+        isServiceBound=false
+        audioPlayerService=null
 
     }
 
@@ -241,15 +246,21 @@ class BookDetalFragment : Fragment(),playlistAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(data: Files) {
-        startServis()
+        val miniPlayer = i_showMiniPlayer?.getIMiniPlayer()
+       // miniPlayer?.stop()
+        if (!isServiceBound) {
+            startServis()
+        }
+
+       //
         CoroutineScope(Dispatchers.IO).launch {
             var check = false
             while (!check) {
                 if (isServiceBound == true) {
-                    audioPlayerService.setListFilesFromDetallFragment(listFiles)
-                    audioPlayerService.setMainUrlFromDetalFragment(mainUrl)
-                    audioPlayerService.setTargetPlayFromDetallFragment(data)
-                    audioPlayerService.setDataBookPlay(book)
+                    audioPlayerService?.setListFilesFromDetallFragment(listFiles)
+                    audioPlayerService?.setMainUrlFromDetalFragment(mainUrl)
+                    audioPlayerService?.setTargetPlayFromDetallFragment(data)
+                    audioPlayerService?.setDataBookPlay(book)
                     check=true
                     CoroutineScope(Dispatchers.Main).launch {
                         findNavController().navigate(R.id.action_bookDetalFragment2_to_playerFragment)

@@ -4,6 +4,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity(),iShowMiniPlayer {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private var  playing = false
+    private var iminiPlayer:iMiniPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,10 +87,15 @@ class MainActivity : AppCompatActivity(),iShowMiniPlayer {
         }
     }
     override fun miniPlayerOffVisible(){
+
         binding.fragmentContainerMiniplayer.visibility = View.GONE
     }
     override fun miniPlayerOnVisible(){
         binding.fragmentContainerMiniplayer.visibility = View.VISIBLE
+    }
+
+    override fun miniPlayerStatusVisible(): Int {
+        return binding.fragmentContainerMiniplayer.visibility
     }
 
     override fun nowPlaing(): Boolean {
@@ -97,6 +104,14 @@ class MainActivity : AppCompatActivity(),iShowMiniPlayer {
 
     override fun nowPlaing(status: Boolean) {
         playing=status
+    }
+
+    override fun setIMiniPlayer(i: iMiniPlayer) {
+        iminiPlayer=i
+    }
+
+    override fun getIMiniPlayer(): iMiniPlayer? {
+        return iminiPlayer
     }
 
     override fun onSupportNavigateUp(): Boolean {

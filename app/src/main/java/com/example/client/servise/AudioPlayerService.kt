@@ -69,10 +69,12 @@ class AudioPlayerService : Service() {
     fun initPlayMedia(){
         if(mediaPlayer!=null) {
             mediaPlayer?.stop()
+            mediaPlayer?.reset()
             mediaPlayer=null
         }
         numberPlay = findNubberTrack()
         if (numberPlay!=-1) {
+
             mediaPlayer = MediaPlayer()
 
             val audioAttributes = AudioAttributes.Builder()
@@ -110,12 +112,12 @@ class AudioPlayerService : Service() {
         }
     }
     fun startAudio(){
-
+        mediaPlayer?.reset()
         mediaPlayer = MediaPlayer.create(
             this,
             Uri.parse(mainUrl+listFiles[numberPlay].name)
         )
-        val audioAttributes = AudioAttributes.Builder()
+         val audioAttributes = AudioAttributes.Builder()
             .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
             .build()
 
@@ -166,32 +168,7 @@ class AudioPlayerService : Service() {
 
         return START_NOT_STICKY
     }
-     fun startAudioPlayback(audioFileUri: String?) {
-        // Ваш код для настройки MediaPlayer и воспроизведения аудио
-        //mediaPlayer.setDataSource(audioFileUri)
-        mediaPlayer = MediaPlayer.create(
-            this,
-            Uri.parse(audioFileUri)
-        )
-        val audioAttributes = AudioAttributes.Builder()
-            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-            .build()
 
-        mediaPlayer?.setAudioAttributes(audioAttributes)
-        mediaPlayer?.start()
-
-        // Создание уведомления для Foreground Service
-         try{
-        showNotification("")}
-         catch (e:Exception){
-
-         }
-
-
-
-    }
-
-    // Intent для кнопки Play
 
 
     fun showNotification(id: String){
