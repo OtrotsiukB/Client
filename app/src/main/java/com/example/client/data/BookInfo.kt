@@ -12,7 +12,7 @@ data class BookInfo(
     val duration: String,
     val infoOfBook:String,
     val cycle: String = "",
-    val numberCycle:Double,
+    val numberCycle:String,
     val genre: List<String>,
     val idInArhive: String,
     val raitingPlus:Int = 0,
