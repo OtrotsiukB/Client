@@ -52,7 +52,7 @@ class SecondFragment : Fragment() {
 
     private var _binding: FragmentSecondBinding? = null
 
-    private lateinit var webView: WebView
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!

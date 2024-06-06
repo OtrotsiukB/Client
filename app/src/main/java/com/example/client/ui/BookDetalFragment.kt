@@ -88,13 +88,13 @@ class BookDetalFragment : Fragment(),playlistAdapter.OnItemClickListener {
 
         val number = book.numberCycle
 
-        val fractionalPart = number.rem(1.0)
-        if (fractionalPart>0){
+       /* val fractionalPart = number.rem(1.0)
+        if (fractionalPart>0){*/
             binding.tvCycle.text = book.cycle + " ("+book.numberCycle+")"
-        }else{
-            binding.tvCycle.text = book.cycle + " ("+book.numberCycle.toInt()+")"
+       // }else{
+         //   binding.tvCycle.text = book.cycle + " ("+book.numberCycle.toInt()+")"
 
-        }
+       // }
         var allgenry =""
         for (item in book.genre){
             allgenry = allgenry +""+item+" "

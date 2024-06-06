@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/startAuthorizationFragment">
 
     <fragment
         android:id="@+id/FirstFragment"
@@ -53,4 +53,21 @@
         android:name="com.example.client.ui.PlayerFragment"
         android:label="fragment_player"
         tools:layout="@layout/fragment_player" />
+    <fragment
+        android:id="@+id/startAuthorizationFragment"
+        android:name="com.example.client.autoservis.ui.StartAuthorizationFragment"
+        android:label="fragment_start_authorization"
+        tools:layout="@layout/fragment_start_authorization" >
+        <action
+            android:id="@+id/action_startAuthorizationFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+        <action
+            android:id="@+id/action_startAuthorizationFragment_to_mainListChoiseFragment"
+            app:destination="@id/mainListChoiseFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainListChoiseFragment"
+        android:name="com.example.client.autoservis.ui.MainListChoiseFragment"
+        android:label="fragment_main_list_choise"
+        tools:layout="@layout/fragment_main_list_choise" />
 </navigation>
