@@ -1,15 +1,19 @@
 package com.example.client.autoservis.ui
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.client.R
+import com.example.client.autoservis.i_nterface.iMainActivity
 import com.example.client.autoservis.network.retrofitAutoservis
 import com.example.client.databinding.FragmentAllBooksInGroupBinding
 import com.example.client.databinding.FragmentStartAuthorizationBinding
+import com.example.client.iShowMiniPlayer
 import com.example.client.network.retrofit
 import com.example.client.ui.allBooksInGroupDirections
 import kotlinx.coroutines.CoroutineScope
@@ -53,6 +57,13 @@ class StartAuthorizationFragment : Fragment() {
         return binding.root
     }
 
+    private var iMainActivity:iMainActivity? = null
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is iMainActivity) {
+            iMainActivity = context
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -66,16 +77,48 @@ class StartAuthorizationFragment : Fragment() {
                     var tempUser =
                         retrofitAutoservis.RetrofitModule.iRetrofitAutoservis.getUser(login)
                    if (tempUser[0].nameUser == login && tempUser[0].paswordUser == password){
-                      // action_startAuthorizationFragment_to_mainListChoiseFragment
-                     //  = allBooksInGroupDirections.actionAllBooksInGroupToBookDetalFragment2(data)
-                       val action = StartAuthorizationFragmentDirections.actionStartAuthorizationFragmentToMainListChoiseFragment()
-                       findNavController().navigate(action)
+                      iMainActivity?.setUser(tempUser[0])
+                       var tempListServis = retrofitAutoservis.RetrofitModule.iRetrofitAutoservis.getServis()
+                       for ( temp in tempListServis){
+                           //открываем сервис
+                           if (temp.id == tempUser[0].idServis) {
+                               iMainActivity?.setServis(temp)
+                               val action =
+                                   StartAuthorizationFragmentDirections.actionStartAuthorizationFragmentToMainListChoiseFragment()
+                               findNavController().navigate(action)
+
+                           }
+                       }
+                       /*
+
+                       добавить заход в магазин
+
+                        */
+
+                   }else{
+                       CoroutineScope(Dispatchers.Main).launch {
+                           // Показать Toast
+                           Toast.makeText(
+                               requireContext(),
+                               "Not correct password!",
+                               Toast.LENGTH_LONG
+                           ).show()
+
+                       }
                    }
 
 
                 }catch (e:Exception)
                 {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        // Показать Toast
+                        Toast.makeText(
+                            requireContext(),
+                            "Not correct!",
+                            Toast.LENGTH_LONG
+                        ).show()
 
+                    }
                 }
 
             }

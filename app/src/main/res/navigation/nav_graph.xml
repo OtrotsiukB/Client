@@ -69,5 +69,13 @@
         android:id="@+id/mainListChoiseFragment"
         android:name="com.example.client.autoservis.ui.MainListChoiseFragment"
         android:label="fragment_main_list_choise"
-        tools:layout="@layout/fragment_main_list_choise" />
+        tools:layout="@layout/fragment_main_list_choise" >
+        <action
+            android:id="@+id/action_mainListChoiseFragment_to_carMainPageFragment"
+            app:destination="@id/carMainPageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/carMainPageFragment"
+        android:name="com.example.client.autoservis.ui.CarMainPageFragment"
+        android:label="CarMainPageFragment" />
 </navigation>

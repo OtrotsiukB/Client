@@ -17,13 +17,16 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.media.session.MediaButtonReceiver.handleIntent
+import com.example.client.autoservis.data.dataapi.APIservistabel
+import com.example.client.autoservis.data.dataapi.APIusertabel
+import com.example.client.autoservis.i_nterface.iMainActivity
 import com.example.client.databinding.ActivityMainBinding
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity(),iShowMiniPlayer {
+class MainActivity : AppCompatActivity(),iShowMiniPlayer, iMainActivity {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -140,5 +143,23 @@ class MainActivity : AppCompatActivity(),iShowMiniPlayer {
 
             }
         }
+    }
+
+    var userNow:APIusertabel = APIusertabel()
+    var servisNow:APIservistabel = APIservistabel()
+    override fun setUser(user: APIusertabel) {
+        userNow = user
+    }
+
+    override fun getUser(): APIusertabel {
+       return userNow
+    }
+
+    override fun setServis(servis: APIservistabel) {
+        servisNow = servis
+    }
+
+    override fun getServis(): APIservistabel {
+        return servisNow
     }
 }
